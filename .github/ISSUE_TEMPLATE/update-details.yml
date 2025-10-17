@@ -1,0 +1,81 @@
+name: Update Activity Details
+description: Request to modify activity description, capacity, or other details
+title: "[Update Activity]: "
+labels: ["update-details"]
+assignees:
+  - Eugene-The-Sloth
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Need to update activity information? Please specify the changes needed below.
+        
+  - type: input
+    id: activity-name
+    attributes:
+      label: Activity Name
+      description: Which activity needs updates?
+      placeholder: "e.g., Art Club"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: update-types
+    attributes:
+      label: What needs to be updated?
+      description: Select all that apply
+      options:
+        - label: Activity description
+        - label: Maximum participants
+        - label: Activity category
+        - label: Other details
+
+  - type: textarea
+    id: current-description
+    attributes:
+      label: Current Description
+      description: What is the current activity description?
+      placeholder: "Copy the current description from the website"
+    validations:
+      required: true
+
+  - type: textarea
+    id: new-description
+    attributes:
+      label: New Description
+      description: What should the new description be? (Leave blank if no change)
+      placeholder: "e.g., Learn artistic techniques including drawing, painting, and sculpture. Students will develop their creative skills and prepare pieces for the school art show."
+
+  - type: input
+    id: current-capacity
+    attributes:
+      label: Current Maximum Participants
+      description: What is the current participant limit?
+      placeholder: "e.g., 15"
+
+  - type: input
+    id: new-capacity
+    attributes:
+      label: New Maximum Participants
+      description: What should the new limit be? (Leave blank if no change)
+      placeholder: "e.g., 20"
+
+  - type: dropdown
+    id: new-category
+    attributes:
+      label: New Activity Category
+      description: Should the activity category change? (Optional)
+      options:
+        - No change needed
+        - Sports
+        - Arts
+        - Academic
+        - Community
+        - Technology
+
+  - type: textarea
+    id: other-changes
+    attributes:
+      label: Other Changes Needed
+      description: Describe any other updates needed
+      placeholder: "e.g., Add equipment requirements, prerequisites, or other important details"

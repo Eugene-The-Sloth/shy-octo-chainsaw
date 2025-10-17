@@ -1,0 +1,79 @@
+name: Add New Activity
+description: Request to add a new club, team, or activity to the school's offerings
+title: "[New Activity]: "
+labels: ["enhancement", "new-activity"]
+assignees:
+  - Eugene-The-Sloth
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping expand our activities! Please fill out this form with details about the new activity.
+        
+  - type: input
+    id: activity-name
+    attributes:
+      label: Activity Name
+      description: What should we call this activity?
+      placeholder: "e.g., Photography Club"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Activity Description
+      description: Provide a brief but informative description of the activity
+      placeholder: "e.g., Learn photography techniques and participate in photo contests. Students will develop skills in composition, lighting, and digital editing."
+    validations:
+      required: true
+
+  - type: input
+    id: schedule-day
+    attributes:
+      label: Meeting Day(s)
+      description: Which day(s) will the activity meet?
+      placeholder: "e.g., Mondays and Wednesdays, or just Tuesday"
+    validations:
+      required: true
+
+  - type: input
+    id: schedule-time
+    attributes:
+      label: Meeting Time
+      description: What time will the activity run?
+      placeholder: "e.g., 3:15 PM - 4:45 PM"
+    validations:
+      required: true
+
+  - type: input
+    id: max-participants
+    attributes:
+      label: Maximum Participants
+      description: How many students can join this activity?
+      placeholder: "e.g., 15"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: activity-type
+    attributes:
+      label: Activity Category
+      description: Which category best describes this activity?
+      options:
+        - Sports
+        - Arts
+        - Academic
+        - Community
+        - Technology
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional Information
+      description: Any other details we should know?
+      placeholder: "e.g., Required equipment, skill level, prerequisites, etc."
+    validations:
+      required: false

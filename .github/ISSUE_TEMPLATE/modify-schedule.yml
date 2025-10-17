@@ -1,0 +1,65 @@
+name: Modify Activity Schedule
+description: Request to change the meeting time or day for an existing activity
+title: "[Schedule Change]: "
+labels: ["schedule-change"]
+assignees:
+  - Eugene-The-Sloth
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Need to adjust an activity's schedule? Please provide the details below.
+        
+  - type: input
+    id: activity-name
+    attributes:
+      label: Activity Name
+      description: Which activity needs a schedule change?
+      placeholder: "e.g., Chess Club"
+    validations:
+      required: true
+
+  - type: input
+    id: current-schedule
+    attributes:
+      label: Current Schedule
+      description: What is the current meeting time?
+      placeholder: "e.g., Mondays 3:15 PM - 4:45 PM"
+    validations:
+      required: true
+
+  - type: input
+    id: new-schedule-day
+    attributes:
+      label: New Meeting Day(s)
+      description: What day(s) should the activity meet?
+      placeholder: "e.g., Tuesdays and Thursdays"
+    validations:
+      required: true
+
+  - type: input
+    id: new-schedule-time
+    attributes:
+      label: New Meeting Time
+      description: What time should the activity run?
+      placeholder: "e.g., 3:15 PM - 4:45 PM"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason for Change
+      description: Please explain why this schedule change is needed
+      placeholder: "e.g., Avoiding conflict with another activity, better alignment with student availability"
+    validations:
+      required: true
+
+  - type: checkbox
+    id: confirm-notification
+    attributes:
+      label: Notification Plan
+      description: Confirm you will notify current participants
+      options:
+        - label: I will ensure all current participants are notified of this schedule change
+          required: true
