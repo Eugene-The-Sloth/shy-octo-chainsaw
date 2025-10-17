@@ -172,3 +172,12 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Chat Modes files
+.github/chatmodes/*
+.github/ISSUES/*
+.github/workflows/*
+!.github/workflows/test-and-report.yml
+
+# Tests cache file
+tests/__pycache__/*
