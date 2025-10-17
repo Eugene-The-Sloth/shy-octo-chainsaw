@@ -8,6 +8,10 @@ Mona here. I'm done preparing your exercise. Hope you enjoy! 💚
 
 Remember, it's self-paced so feel free to take a break! ☕️
 
+## Latest Updates
+
+- Added Manga Club! Join us on Tuesdays at 7:00 PM to explore fantastic stories from Japanese graphic novels.
+
 [![](https://img.shields.io/badge/Go%20to%20Exercise-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](https://github.com/Eugene-The-Sloth/shy-octo-chainsaw/issues/1)
 
 ---
