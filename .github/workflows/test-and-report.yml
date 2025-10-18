@@ -1,0 +1,49 @@
+name: Test and Report
+
+on:
+  push:
+    branches: [ main, add-manga-club-and-templates ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r src/requirements.txt pytest requests
+
+      - name: Run tests
+        id: run_tests
+        run: |
+          pytest -q || echo "PYTEST_FAILED=1" > pytest_status.txt
+
+      - name: Check pytest result and create issue on failure
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const failed = fs.existsSync('pytest_status.txt');
+            if (failed) {
+              const ref = process.env.GITHUB_REF || '';
+              const body = 'Automated tests failed on branch ' + ref + '\n\nPlease check the workflow run and test logs for details.';
+              github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Automated test failures on ' + ref,
+                body: body,
+                labels: ['bug','tests']
+              }).then(() => {}).catch(() => {});
+            }

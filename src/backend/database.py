@@ -4,31 +4,64 @@ In-memory database configuration for testing the Mergington High School API
 
 from argon2 import PasswordHasher
 
-# In-memory collections
-activities_collection = {}
-teachers_collection = {}
+# (Collections are defined as InMemoryCollection instances below)
 
 class InMemoryCollection:
     def __init__(self):
         self.data = {}
-        
+
     def find(self, query=None):
-        # Simple implementation - ignore query for now
-        return [{"_id": k, **v} for k, v in self.data.items()]
-        
+        # Very small query matcher: supports matching by _id or schedule_details.days/$in
+        results = []
+        for k, v in self.data.items():
+            doc = {"_id": k, **v}
+            if not query:
+                results.append(doc)
+                continue
+
+            # Support simple _id lookup
+            if isinstance(query, dict) and "_id" in query:
+                if query["_id"] == k:
+                    results.append(doc)
+                continue
+
+            # Support schedule_details.days $in matching
+            match = True
+            for key, cond in (query or {}).items():
+                if key == "schedule_details.days" and isinstance(cond, dict) and "$in" in cond:
+                    days = v.get("schedule_details", {}).get("days", [])
+                    if not any(d in days for d in cond["$in"]):
+                        match = False
+                        break
+            if match:
+                results.append(doc)
+
+        return results
+
+
     def find_one(self, query):
+        # Support finding by _id
         if isinstance(query, dict):
             if "_id" in query:
-                return {"_id": query["_id"], **self.data.get(query["_id"], {})} if query["_id"] in self.data else None
+                if query["_id"] in self.data:
+                    return {"_id": query["_id"], **self.data[query["_id"]]}
+                return None
+
+            # Support a subset of queries by delegating to find()
+            found = self.find(query)
+            return found[0] if found else None
         return None
-        
+
+
     def insert_one(self, document):
         id = document["_id"]
         del document["_id"]
         self.data[id] = document
-        
+
+
     def count_documents(self, query=None):
         return len(self.data)
+
 
     def aggregate(self, pipeline):
         # Simple implementation for days aggregation
@@ -39,6 +72,42 @@ class InMemoryCollection:
                     days.update(activity["schedule_details"]["days"])
             return [{"_id": day} for day in sorted(days)]
         return []
+
+
+    def update_one(self, filter_doc, update_doc):
+        """Support minimal update operations used by routers: $push and $pull on participants"""
+        # Find the document
+        _id = filter_doc.get("_id")
+        if _id not in self.data:
+            class DummyResult:
+                modified_count = 0
+            return DummyResult()
+
+        doc = self.data[_id]
+        # Handle $push
+        if "$push" in update_doc:
+            for field, val in update_doc["$push"].items():
+                if field == "participants":
+                    if "participants" not in doc:
+                        doc["participants"] = []
+                    doc["participants"].append(val)
+
+        # Handle $pull
+        if "$pull" in update_doc:
+            for field, val in update_doc["$pull"].items():
+                if field == "participants" and "participants" in doc:
+                    try:
+                        doc["participants"].remove(val)
+                    except ValueError:
+                        pass
+
+        self.data[_id] = doc
+
+        class Result:
+            def __init__(self):
+                self.modified_count = 1
+
+        return Result()
 
 # Use in-memory collections
 activities_collection = InMemoryCollection()
@@ -57,7 +126,7 @@ def init_database():
     if activities_collection.count_documents({}) == 0:
         for name, details in initial_activities.items():
             activities_collection.insert_one({"_id": name, **details})
-            
+
     # Initialize teacher accounts if empty
     if teachers_collection.count_documents({}) == 0:
         for teacher in initial_teachers:
@@ -230,4 +299,3 @@ initial_teachers = [
         "role": "admin"
     }
 ]
-
