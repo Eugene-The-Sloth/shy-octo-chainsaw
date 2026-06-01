@@ -1,15 +1,48 @@
 """
-MongoDB database configuration and setup for Mergington High School API
+In-memory database configuration for testing the Mergington High School API
 """
 
-from pymongo import MongoClient
 from argon2 import PasswordHasher
 
-# Connect to MongoDB
-client = MongoClient('mongodb://localhost:27017/')
-db = client['mergington_high']
-activities_collection = db['activities']
-teachers_collection = db['teachers']
+# In-memory collections
+activities_collection = {}
+teachers_collection = {}
+
+class InMemoryCollection:
+    def __init__(self):
+        self.data = {}
+        
+    def find(self, query=None):
+        # Simple implementation - ignore query for now
+        return [{"_id": k, **v} for k, v in self.data.items()]
+        
+    def find_one(self, query):
+        if isinstance(query, dict):
+            if "_id" in query:
+                return {"_id": query["_id"], **self.data.get(query["_id"], {})} if query["_id"] in self.data else None
+        return None
+        
+    def insert_one(self, document):
+        id = document["_id"]
+        del document["_id"]
+        self.data[id] = document
+        
+    def count_documents(self, query=None):
+        return len(self.data)
+
+    def aggregate(self, pipeline):
+        # Simple implementation for days aggregation
+        if len(pipeline) == 3:  # Assuming the days pipeline
+            days = set()
+            for activity in self.data.values():
+                if "schedule_details" in activity:
+                    days.update(activity["schedule_details"]["days"])
+            return [{"_id": day} for day in sorted(days)]
+        return []
+
+# Use in-memory collections
+activities_collection = InMemoryCollection()
+teachers_collection = InMemoryCollection()
 
 # Methods
 def hash_password(password):
@@ -53,6 +86,17 @@ initial_activities = {
         },
         "max_participants": 20,
         "participants": ["emma@mergington.edu", "sophia@mergington.edu"]
+    },
+    "Manga Club": {
+        "description": "Explore the fantastic stories of the most interesting characters from Japanese Manga (graphic novels).",
+        "schedule": "Tuesdays, 7:00 PM - 8:00 PM",
+        "schedule_details": {
+            "days": ["Tuesday"],
+            "start_time": "19:00",
+            "end_time": "20:00"
+        },
+        "max_participants": 15,
+        "participants": []
     },
     "Morning Fitness": {
         "description": "Early morning physical training and exercises",

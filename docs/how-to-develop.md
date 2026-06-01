@@ -65,4 +65,10 @@ These dependencies will be installed when you run `pip install -r requirements.t
 | POST   | `/activities/{activity_name}/signup?email=student@mergington.edu` | Sign up for an activity                                             |
 
 > [!IMPORTANT]
-> All data is stored in memory, which means data will be reset when the server restarts.
+> All data is stored in memory using a simple key-value store implementation, which means data will be reset when the server restarts. The initial data includes various activities like Chess Club, Programming Class, and the newly added Manga Club.
+>
+> Available Activities:
+> - Manga Club (NEW!) - Tuesdays at 7:00 PM
+> - Chess Club - Mondays and Fridays, 3:15 PM
+> - Programming Class - Tuesdays and Thursdays, 7:00 AM
+> - And more!
